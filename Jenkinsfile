@@ -51,10 +51,10 @@ pipeline {
                     sshagent(['mst-keys']) {
                         try {
                             sh 'sleep 6'
-                            dir("${MST}/queue"){
+                            dir("${MST}/queue") {
                                 available_names = sh(returnStdout: true, script: "ls").trim().split()
                                 sh "echo ${available_names}"
-                                for (name in available_names){
+                                for (name in available_names) {
                                     log = "${MST}/logs/${name}.log"
                                     
                                     is_directory = sh(script: "test -d ${name} && echo '1' || echo '0' ", returnStdout: true).trim()
@@ -73,27 +73,40 @@ pipeline {
                                         sh "echo ${folder}"
                                         cloud_loc=sh(returnStdout: true, script: "echo ${folder} |awk -F\'${name}/\' '{print \$2}'").trim()
                                         sh "echo ${cloud_loc}"
-                                        filename_list=sh(returnStdout: true, script: "ls ${cloud_loc} -type d -links 2").trim().split() 
-                                        sh "sftp ${USERNAME}@${SERVER} >> ${log} 2>&1 <<!EOF!"
-                                        sh "mkdir ${cloud_loc}"
-                                        dir("${cloud_loc}"){
-                                            for (filename in filename_list){
-                                                sh "echo ${name} ${cloud_loc} ${filename} > ${log} 2>&1"
-                                                sh "echo 'Processing ${name}/${cloud_loc}/${filename} -> ${cloud_loc}'"
-                                                sh "put ${filename}"
-                                                check_flag=sh(returnStdout: true, script: "test \$1").trim()
-                                                if (check_flag == 0)
-                                                    success_function(log, name, cloud_loc, filename)
-                                                else
-                                                    fail_function(log, name, cloud_loc, filename)
+
+                                        directory_files = sh(script: "ls -A ${name}/${cloud_loc}", returnStdout: true).trim().split()
+                                    
+                                        if(directory_files.length == 0){
+                                            sh "echo '${name}/${cloud_loc} is empty' >> ${log} 2>&1"
+                                            continue
+                                        }
+                                        dir('${name}/${cloud_loc}'){
+                                            filename_list=sh(returnStdout: true, script: "ls").trim().split() 
+                                        
+                                            sh "sftp ${USERNAME}@${SERVER} >> ${log} 2>&1 <<!EOF!"
+                                            sh "mkdir ${cloud_loc}"
+                                            dir("${cloud_loc}"){
+                                                sh "pwd"
+                                                for (filename in filename_list){
+                                                    sh "echo ${name} ${cloud_loc} ${filename} > ${log} 2>&1"
+                                                    sh "echo 'Processing ${name}/${cloud_loc}/${filename} -> ${cloud_loc}'"
+                                                    sh "put ${filename}"
+                                                }
+                                                sh "exit"
                                             }
                                         }
-                                        sh "exit"
+                                        check_fail_flag=sh(returnStdout: true, script: "test \$? && echo '1' || echo '0' ").trim()
+                                        if (check_fail_flag != 0 ){
+                                            success_function(log, name, cloud_loc, filename)
+                                        }
+                                        else {
+                                            fail_function(log, name, cloud_loc, filename)
+                                        }
                                     }
                                 }//end names
                             }
                         } catch (err) {
-                            echo "Catching[2]: ${err}"
+                            echo "ERROR: ${err}"
                             currentBuild.result = 'FAILURE'
                             throw err
                         }
