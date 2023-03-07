@@ -83,17 +83,25 @@ pipeline {
                                         dir("${name}/${cloud_loc}"){
                                             filename_list=sh(returnStdout: true, script: "ls").trim().split() 
                                             sh "echo ${filename_list}"
-                                            sh "sftp ${USERNAME}@${SERVER} " //>> ${log} 2>&1
-                                            sh "pwd"
-                                            sh "mkdir ${cloud_loc}"
-                                            dir("${cloud_loc}"){
-                                                sh "pwd"
-                                                for (filename in filename_list){
-                                                    sh "echo ${name} ${cloud_loc} ${filename} > ${log} 2>&1"
-                                                    sh "echo 'Processing ${name}/${cloud_loc}/${filename} -> ${cloud_loc}'"
-                                                    sh "put ${filename}"
+                                            
+                                            for (filename in filename_list){
+                                                sh "echo ${name} ${cloud_loc} ${filename} > ${log} 2>&1"
+                                                sh "echo 'Processing ${name}/${cloud_loc}/${filename} -> ${cloud_loc}'"
+                                                try {
+                                                    sh script:"""\
+                                                    sftp ${USERNAME}@${SERVER} 2>&1 <<!EOF! |tee ${log} 
+                                                    pwd
+                                                    mkdir ${cloud_loc}
+                                                    cd ${cloud_loc}
+                                                    pwd
+                                                    put $filename 
+                                                    exit
+                                                    """, returnStdout: true
+
+                                                } catch (err) {
+                                                    sh "echo CAUGHT_Error: ${err.getMessage()}"
+                                                    output_errors = err.getMessage()
                                                 }
-                                                sh "exit"
                                             }
                                         }
                                         check_fail_flag=sh(returnStdout: true, script: "test \$? && echo '1' || echo '0' ").trim()
