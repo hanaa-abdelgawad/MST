@@ -8,7 +8,7 @@ def mailRecipients = '''yara.amrallah@siemens.com, \
                     '''
 def success_function(log, name, cloud_loc, filename){
     sh "echo PASS >> ${log} 2>&1"
-    sleep 120
+    sh 'sleep 120'
     sh "rm -f ${MST}/queue/${name}/${cloud_loc}/${filename}"
     sh "find ${MST}/queue/${name}/ -empty -type d -delete"
     sh "echo '${PREFIX}/${cloud_loc}/${filename} >>/tmp/url.log'"
@@ -69,8 +69,7 @@ pipeline {
             steps {
                 sshagent(['mst-keys']) {
                     try {
-                        while (sleep 60){
-                            do{
+                      sh 'sleep 60'
                                 sh "cd ${mst}/queue"
                                 available_names = sh(returnStdout: true, script: "ls").trim().split()
                        
@@ -106,14 +105,12 @@ pipeline {
                                         sh "exit"
                                     }
                                 }//end names
-                            } //after each sleep
-                        }
                     } catch (err) {
                         echo "Catching[2]: ${err}"
                         currentBuild.result = 'FAILURE'
                         throw err
                     }
-                }
+               }
             }
         }
     }
