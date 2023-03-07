@@ -86,7 +86,7 @@ pipeline {
                                     folders_list=sh(returnStdout: true, script: "find ${name} -type d -links 2").trim().split() 
                                     for (folder in folders_list ){
                                         sh "echo ${folder}"
-                                        cloud_loc=sh(returnStdout: true, script: "awk -F'${name}' '{print $2}'").trim()
+                                        cloud_loc=sh(returnStdout: true, script: "echo ${folder} |awk -F'${name}' '{print \$2}'").trim()
                                         sh "echo ${cloud_loc}"
                                         filename_list=sh(returnStdout: true, script: "ls ${folder} -type d -links 2").trim().split() 
                                         sh "sftp ${USERNAME}@${SERVER} >> ${log} 2>&1 <<!EOF!"
@@ -96,7 +96,7 @@ pipeline {
                                             sh "echo ${name} ${cloud_loc} ${filename} > ${log} 2>&1"
                                             sh "echo 'Processing ${name}/${cloud_loc}/${filename} -> ${cloud_loc}'"
                                             sh "put ${filename}"
-                                            check_flag=sh(returnStdout: true, script: "test $1").trim()
+                                            check_flag=sh(returnStdout: true, script: "test \$1").trim()
                                             if (check_flag == 0)
                                                 success_function(log, name, cloud_loc, filename)
                                             else
