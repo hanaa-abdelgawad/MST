@@ -80,7 +80,7 @@ pipeline {
                                             sh "echo '${name}/${cloud_loc} is empty' >> ${log} 2>&1"
                                             continue
                                         }
-                                        dir('${name}/${cloud_loc}'){
+                                        dir("${name}/${cloud_loc}"){
                                             filename_list=sh(returnStdout: true, script: "ls").trim().split() 
                                         
                                             sh "sftp ${USERNAME}@${SERVER} >> ${log} 2>&1 <<!EOF!"
