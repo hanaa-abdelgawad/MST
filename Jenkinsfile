@@ -50,19 +50,6 @@ pipeline {
               script {
                     sshagent(['mst-keys']) {
                         try {
-                            SSH_AGENT_PID = sh(script: "test -z \"$SSH_AGENT_PID\"", returnStdout: true).trim()
-                            if (SSH_AGENT_PID) {
-                                error("SSH-AGENT NOT SET")
-                            }
-                        }
-                        catch (err) {
-                            sh "echo \"SSH-AGENT NOT SET\" >&2"
-                            sh "echo \"SSH-AGENT NOT SET\" >${MST}/DEAD"
-                            echo "Catching[2]: ${err}"
-                            currentBuild.result = 'FAILURE'
-                            throw err
-                        }
-                        try {
                             sh 'sleep 60'
                             sh "cd ${mst}/queue"
                             available_names = sh(returnStdout: true, script: "ls").trim().split()
