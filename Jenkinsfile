@@ -57,7 +57,10 @@ pipeline {
                                 for (name in available_names){
                                     log = "${MST}/logs/${}.log"
                                     is_directory = sh(script: "test -d ${name}", returnStdout: true).trim()
+                                    sh "echo ${is_directory}"
                                     directory_files = sh(script: "ls -A ${name}", returnStdout: true).trim().split()
+                                    sh "echo ${directory_files}"
+                                    sh "echo ${directory_files.length}"
                                     if( !is_directory || directory_files.length == 0) {//not directory or empty directory
                                         sh(script: "echo '${name} is not a directory or empty' >> ${log} 2>&1").trim()
                                         continue
