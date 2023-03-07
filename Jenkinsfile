@@ -67,7 +67,7 @@ pipeline {
         }
         stage("MST") {
             steps {
-                sshagent(['mst-keys']) {
+              script {
                     try {
                       sh 'sleep 60'
                                 sh "cd ${mst}/queue"
@@ -84,6 +84,7 @@ pipeline {
                                     MAILTO=name
                                     mailRecipients = mailRecipients + name + "@wv.mentorg.com, \\"
                                     folders_list=sh(returnStdout: true, script: "find ${name} -type d -links 2").trim().split() 
+                                    sshagent(['mst-keys']) {
                                     for (folder in folders_list ){
                                         sh "echo ${folder}"
                                         cloud_loc=sh(returnStdout: true, script: "echo ${folder} |awk -F'${name}' '{print \$2}'").trim()
@@ -103,6 +104,7 @@ pipeline {
                                                 fail_function(log, name, cloud_loc, filename)
                                         }
                                         sh "exit"
+                                    }
                                     }
                                 }//end names
                     } catch (err) {
