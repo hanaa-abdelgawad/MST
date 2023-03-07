@@ -50,10 +50,10 @@ pipeline {
               script {
                     sshagent(['mst-keys']) {
                         try {
-                            sh 'sleep 60'
+                            sh 'sleep 6'
                             dir( "${MST}/queue"){
                                 available_names = sh(returnStdout: true, script: "ls").trim().split()
-                            
+                                sh "echo ${available_names}"
                                 for (name in available_names){
                                     log = "${MST}/logs/${}.log"
                                     is_directory = sh(script: "test -d ${name}", returnStdout: true).trim()
