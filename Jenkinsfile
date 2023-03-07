@@ -1,5 +1,4 @@
 def PREFIX = 'https://mst-support.sw.siemens.com/?RelayState=/dvt'
-def MAILTO = "habdelgaw"
 def MST = "/home/habdelgaw"
 def USERNAME = "svc_icvs_dvt"
 def SERVER = "mst-support.sw.siemens.com"
@@ -81,7 +80,6 @@ pipeline {
                                         sh(script: "echo '${name} is not a directory or empty' >> ${log} 2>&1").trim()
                                         continue
                                     }
-                                    MAILTO=name
                                     mailRecipients = mailRecipients + name + "@wv.mentorg.com, \\"
                                     folders_list=sh(returnStdout: true, script: "find ${name} -type d -links 2").trim().split() 
                                     sshagent(['mst-keys']) {
