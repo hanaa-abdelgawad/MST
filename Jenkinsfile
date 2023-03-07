@@ -83,7 +83,7 @@ pipeline {
                                         dir("${name}/${cloud_loc}"){
                                             filename_list=sh(returnStdout: true, script: "ls").trim().split() 
                                         
-                                            sh "sftp ${USERNAME}@${SERVER} >> ${log} 2>&1 <<!EOF!"
+                                            sh "sftp ${USERNAME}@${SERVER} >> ${log} 2>&1"
                                             sh "mkdir ${cloud_loc}"
                                             dir("${cloud_loc}"){
                                                 sh "pwd"
