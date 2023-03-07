@@ -55,7 +55,7 @@ pipeline {
                                 available_names = sh(returnStdout: true, script: "ls").trim().split()
                                 sh "echo ${available_names}"
                                 for (name in available_names){
-                                    log = "${MST}/logs/${}.log"
+                                    log = "${MST}/logs/${name}.log"
                                     is_directory = sh(script: "test -d ${name}", returnStdout: true).trim()
                                     sh "echo ${is_directory}"
                                     directory_files = sh(script: "ls -A ${name}", returnStdout: true).trim().split()
