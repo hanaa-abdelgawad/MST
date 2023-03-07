@@ -87,9 +87,9 @@ pipeline {
                                             for (filename in filename_list){
                                                 sh "echo ${name} ${cloud_loc} ${filename} > ${log} 2>&1"
                                                 sh "echo 'Processing ${name}/${cloud_loc}/${filename} -> ${cloud_loc}'"
-                                                try {
+                                                try { // <<!EOF! |tee ${log} 
                                                     sh script:"""\
-                                                    sftp ${USERNAME}@${SERVER} 2>&1 <<!EOF! |tee ${log} 
+                                                    sftp ${USERNAME}@${SERVER} 2>&1
                                                     pwd
                                                     mkdir ${cloud_loc}
                                                     cd ${cloud_loc}
