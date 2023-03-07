@@ -56,7 +56,7 @@ pipeline {
                                 sh "echo ${available_names}"
                                 for (name in available_names){
                                     log = "${MST}/logs/${name}.log"
-                                    name.folder.exists()
+                                   
                                     is_directory = sh(script: "test -d ${name} && echo '1' || echo '0' ", returnStdout: true).trim()
                                     sh "echo ${is_directory}"
                                     directory_files = sh(script: "ls -A ${name}", returnStdout: true).trim().split()
