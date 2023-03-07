@@ -50,8 +50,8 @@ pipeline {
               script {
                     sshagent(['mst-keys']) {
                         try {
-                            sh 'sleep 60'
-                            sh "cd ${mst}/queue"
+                            sh 'sleep 6'
+                            sh "cd ${MST}/queue"
                             available_names = sh(returnStdout: true, script: "ls").trim().split()
                         
                             for (name in available_names){
