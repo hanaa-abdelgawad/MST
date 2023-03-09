@@ -94,7 +94,7 @@ pipeline {
                                                     mkdir ${cloud_loc}\
                                                     cd ${cloud_loc}\
                                                     pwd\
-                                                    put $filename\ 
+                                                    put ${filename}\ 
                                                     exit\
                                                     """, returnStdout: true
 
