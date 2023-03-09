@@ -89,20 +89,13 @@ pipeline {
                                                 sh "echo 'Processing ${name}/${cloud_loc}/${filename} -> ${cloud_loc}'"
                                                 try { // <<!EOF! |tee ${log} 
                                                     sh script:"""\
-                                                    sftp ${USERNAME}@${SERVER} >> ${log} 2>&1 <<!EOF!
-                                                        sh 'pwd'
-                                                        mkdir ${cloud_loc}
-                                                        cd ${cloud_loc}
-                                                        sh 'pwd'
-                                                        put $filename 
-                                                        exit
-                                                    !EOF!
-                                                        if test "$?" -eq 0
-                                                        then
-                                                            echo PASS >> $log 2>&1
-                                                        else
-                                                            echo FAIL >> $log 2>&1
-                                                        fi
+                                                    sftp ${USERNAME}@${SERVER} >> ${log} 2>&1 \
+                                                    pwd\
+                                                    mkdir ${cloud_loc}\
+                                                    cd ${cloud_loc}\
+                                                    pwd\
+                                                    put $filename\ 
+                                                    exit\
                                                     """, returnStdout: true
 
                                                 } catch (err) {
