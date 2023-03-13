@@ -90,10 +90,8 @@ pipeline {
                                                 try { // <<!EOF! |tee ${log} 
                                                     sh script:"""\
                                                     sftp ${USERNAME}@${SERVER} >> ${log} 2>&1 << EOF
-                                                        pwd
                                                         mkdir ${cloud_loc}
                                                         cd ${cloud_loc}
-                                                        pwd
                                                         put ${filename} 
                                                         exit 0
                                                         << EOF
@@ -103,15 +101,16 @@ pipeline {
                                                     sh "echo CAUGHT_Error: ${err.getMessage()}"
                                                     output_errors = err.getMessage()
                                                 }
+                                                check_fail_flag=sh(returnStdout: true, script: "test \$? && echo '1' || echo '0' ").trim()
+                                                if (check_fail_flag != 0 ){
+                                                    success_function(log, name, cloud_loc, filename)
+                                                }
+                                                else {
+                                                    fail_function(log, name, cloud_loc, filename)
+                                                }
                                             }
                                         }
-                                        check_fail_flag=sh(returnStdout: true, script: "test \$? && echo '1' || echo '0' ").trim()
-                                        if (check_fail_flag != 0 ){
-                                            success_function(log, name, cloud_loc, filename)
-                                        }
-                                        else {
-                                            fail_function(log, name, cloud_loc, filename)
-                                        }
+                                        
                                     }
                                 }//end names
                             }
