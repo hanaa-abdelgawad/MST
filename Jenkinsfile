@@ -94,9 +94,9 @@ pipeline {
                                                         mkdir ${cloud_loc}
                                                         cd ${cloud_loc}
                                                         pwd
-                                                        put $filename 
+                                                        put ${filename} 
                                                         exit 0
-                                                        << EOF
+                                                        EOF
                                                     """, returnStdout: true
 
                                                 } catch (err) {
