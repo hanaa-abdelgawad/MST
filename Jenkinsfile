@@ -5,7 +5,7 @@ def SERVER = "mst-support.sw.siemens.com"
 def mailRecipients = '''yara.amrallah@siemens.com, \
                     hanaa.abdelgawad@siemens.com, \
                     '''
-def success_function(log, name, cloud_loc, filename){
+def success_function(MST, log, name, cloud_loc, filename){
     sh "echo PASS >> ${log} 2>&1"
     sh 'sleep 120'
     sh "rm -f ${MST}/queue/${name}/${cloud_loc}/${filename}"
@@ -25,7 +25,7 @@ def success_function(log, name, cloud_loc, filename){
     ]
 }
 
-def fail_function(log, name, cloud_loc, filename){
+def fail_function(MST,log, name, cloud_loc, filename){
     sh "echo FAIL >> ${log} 2>&1"
     
     sh "mv ${MST}/queue/${name} ${MST}/fail/"
@@ -103,10 +103,10 @@ pipeline {
                                                 }
                                                 check_fail_flag=sh(returnStdout: true, script: "test \$? && echo '1' || echo '0' ").trim()
                                                 if (check_fail_flag != 0 ){
-                                                    success_function(log, name, cloud_loc, filename)
+                                                    success_function(MST,log, name, cloud_loc, filename)
                                                 }
                                                 else {
-                                                    fail_function(log, name, cloud_loc, filename)
+                                                    fail_function(MST, log, name, cloud_loc, filename)
                                                 }
                                             }
                                         }
