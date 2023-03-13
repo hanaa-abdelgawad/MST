@@ -90,10 +90,8 @@ pipeline {
                                                 try { // <<!EOF! |tee ${log} 
                                                     sh script:"""\
                                                     sftp ${USERNAME}@${SERVER} >> ${log} 2>&1 << EOF \
-                                                        "pwd && \
-                                                        mkdir ${cloud_loc} && \
+                                                        "mkdir ${cloud_loc} && \
                                                         cd ${cloud_loc} && \
-                                                        pwd && \
                                                         put ${filename} && \
                                                         exit 0 && \
                                                         EOF"
